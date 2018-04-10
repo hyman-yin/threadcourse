@@ -16,10 +16,10 @@ public class ThreadFactorySimpleTest {
 	private static ThreadFactory factory = new MyThreadFactory();
 	
 	public static void main(String[] args) {
-		ExecutorService serviceFixed = Executors.newCachedThreadPool(factory);//固定数量线程
+		ExecutorService cachedPool = Executors.newCachedThreadPool(factory);
 		
 		for(int i=0;i<10;i++){
-			serviceFixed.execute(new Runnable() {
+			cachedPool.execute(new Runnable() {
 				public void run() {
 					System.out.println(Thread.currentThread().getName()+" running...");
 				}
@@ -34,7 +34,7 @@ class MyThreadFactory implements ThreadFactory{
 		Thread thread = new Thread(r, "hyman");
 		thread.setDaemon(true);
 //		thread.setPriority(Thread.MAX_PRIORITY);
-//		thread.setUncaughtExceptionHandler(new GlobalExceptionHandler());
+		thread.setUncaughtExceptionHandler(new GlobalExceptionHandler());
 		return thread;
 	}
 	

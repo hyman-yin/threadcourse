@@ -10,8 +10,13 @@ import java.util.concurrent.TimeUnit;
  * @author yinlongcheng 
  *
  */
-public class CyclicBarrierTest {
-	private static CyclicBarrier cyclicBarrier = new CyclicBarrier(4);
+public class CyclicBarrierTest1 {
+	private static CyclicBarrier cyclicBarrier = new CyclicBarrier(4,new Runnable() {
+		@Override
+		public void run() {
+			System.out.println("开始往下运行");
+		}
+	});
 	
 	public static void main(String[] args) {
 		for(int i=0;i<20;i++){

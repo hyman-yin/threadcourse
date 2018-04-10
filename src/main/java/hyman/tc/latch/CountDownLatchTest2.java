@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @author yinlongcheng 
  *
  */
-public class CountDownLatchTest {
+public class CountDownLatchTest2 {
 	private static CountDownLatch latch = new CountDownLatch(4);
 	
 	public static void main(String[] args) {

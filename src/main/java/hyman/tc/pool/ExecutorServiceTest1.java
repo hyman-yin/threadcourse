@@ -1,9 +1,8 @@
 package hyman.tc.pool;
 
-import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,16 +13,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorServiceTest1 {
 	public static void main(String[] args) {
-		ExecutorService serviceSingle = Executors.newSingleThreadExecutor();//单线程
-		ExecutorService serviceFixed = Executors.newFixedThreadPool(2);//固定数量线程
-		ExecutorService serviceCached = Executors.newCachedThreadPool();//弹性线程
-		ScheduledExecutorService serviceSchedule = Executors.newScheduledThreadPool(2);//带定时功能线程
+		//三个方法都有重载的方法，可以传入ThreadFactory类型参数
+		ExecutorService singlePool = Executors.newSingleThreadExecutor();//单线程
+		ExecutorService fixedPool = Executors.newFixedThreadPool(2);//固定数量线程
+		ExecutorService cachedPool = Executors.newCachedThreadPool();//弹性线程
 		
 		for(int i=0;i<10;i++){
 			final int j=i;
-			serviceSingle.execute(new Runnable() {
-//			serviceFixed.execute(new Runnable() {
-//			serviceCached.execute(new Runnable() {
+			singlePool.execute(new Runnable() {
+//			fixedPool.execute(new Runnable() {
+//			cachedPool.execute(new Runnable() {
 				@Override
 				public void run() {
 					System.out.println("thread"+j+"begin running...");
@@ -37,45 +36,37 @@ public class ExecutorServiceTest1 {
 			});
 		}
 		
-//		serviceFixed.shutdown();//shutdown方法让线程池继续运行当前已经运行的线程，不再开启新的线程
-//		service.isShutdown();//判断线程是否已经执行完毕，当所有线程都执行完毕，会打印true
+		//下面是线程池的三个常用关闭方法
 		
-		//因为schedulepool的大小设置为2，因此任务1，2，3并不是严格按照schedle来运行的,而是存在资源抢占的情况
-		//如果把大小设置为3或大于3，那么结果就很有规律性，线程池性能调优其中一个重点就是调这个参数的大小
-		serviceSchedule.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println("定时任务1运行： "+new Date()+" ---");
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}, 0, 1, TimeUnit.SECONDS);
+		//shutdown方法让线程池继续运行当前已经运行的线程，不再开启新的线程
+		singlePool.shutdown();
 		
-		serviceSchedule.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println("定时任务2运行： "+new Date()+" ++++++++");
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}, 0, 2, TimeUnit.SECONDS);
+		/**
+		 * 先停止接收外部提交的任务,忽略队列里等待的任务,尝试将正在跑的任务interrupt中断,返回未执行的任务列表
+		 * 通过调用Thread.interrupt()方法来实现终止线程，但是大家知道，这种方法的作用有限，
+		 * 如果线程中没有sleep 、wait、Condition、定时锁等应用,interrupt()方法是无法中断当前的线程的。
+		 * 
+		 * 返回未完成任务列表
+		 */
+//		List<Runnable> list = singlePool.shutdownNow();
 		
-		serviceSchedule.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println("定时任务3运行： "+new Date()+" ************");
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}, 0, 3, TimeUnit.SECONDS);
+		/**
+		 * 当前线程阻塞，直到等所有已提交的任务（包括正在跑的和队列中等待的）执行完或者等超时时间到或者线程被中断，抛出InterruptedException，
+		 * 然后返回true（所有任务执行完毕）或false（已超时）
+		 */
+//		try {
+//			boolean flag = singlePool.awaitTermination(5, TimeUnit.SECONDS);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+		
+		//判断线程是否已经执行完毕，当所有线程都执行完毕，会打印true
+		try {
+			TimeUnit.SECONDS.sleep(12);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("线程池已关闭？ -- "+singlePool.isShutdown());
+		
 	}
 }
