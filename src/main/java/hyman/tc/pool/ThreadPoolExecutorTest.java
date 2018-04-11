@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @author yinlongcheng 
  *
  */
-public class ThreadPoolExecutorTest2 {
+public class ThreadPoolExecutorTest {
 	public static void main(String[] args) {
 		/**
 		 * 主要有下面4个构造方法，各参数的含义如下
